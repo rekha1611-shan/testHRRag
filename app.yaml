@@ -1,0 +1,46 @@
+runtime: custom
+env: flex
+service: default
+
+# Keep one warm instance for this demo and cap scale-out for cost control.
+# App Engine Flexible does not scale to zero.
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 2
+  cool_down_period_sec: 120
+  cpu_utilization:
+    target_utilization: 0.65
+
+resources:
+  cpu: 1
+  memory_gb: 2
+  disk_size_gb: 10
+
+# Streamlit uses a persistent WebSocket connection. Session affinity helps
+# reconnecting clients return to the same instance when possible.
+network:
+  session_affinity: true
+
+env_variables:
+  # Store the actual Gemini API key in Secret Manager under this secret name.
+  GEMINI_SECRET_NAME: "gemini-api-key"
+  GEMINI_CHAT_MODEL: "gemini-2.5-flash"
+  GEMINI_EMBEDDING_MODEL: "models/gemini-embedding-001"
+  AUTO_BUILD_FAISS_INDEX: "true"
+  LANGCHAIN_TRACING_V2: "false"
+
+liveness_check:
+  path: "/_stcore/health"
+  check_interval_sec: 30
+  timeout_sec: 4
+  failure_threshold: 4
+  success_threshold: 2
+  initial_delay_sec: 60
+
+readiness_check:
+  path: "/_stcore/health"
+  check_interval_sec: 10
+  timeout_sec: 4
+  failure_threshold: 6
+  success_threshold: 2
+  app_start_timeout_sec: 300

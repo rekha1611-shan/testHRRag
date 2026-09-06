@@ -1,0 +1,9 @@
+streamlit
+python-dotenv
+langchain
+langchain-google-genai>=4.3.7,<5
+langchain-community
+langchain-classic
+faiss-cpu
+pypdf
+google-cloud-secret-manager
